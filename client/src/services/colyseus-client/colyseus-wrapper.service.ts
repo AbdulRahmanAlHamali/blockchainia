@@ -38,7 +38,7 @@ export class ColyseusWrapperService {
     }
 
     getMessageReceivedObservable(path: string) {
-        let messageSubject: Subject<any> = new Subject();
+        let messageSubject: ReplaySubject<any> = new ReplaySubject();
 
         this._room.listen(path, (data) => {
             messageSubject.next(data.value);
