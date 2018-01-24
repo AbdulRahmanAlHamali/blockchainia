@@ -1,0 +1,28 @@
+{
+  "name": "blockchainia-backend",
+  "version": "0.1.0",
+  "description": "Fun Multiplayer Game to Teach About the Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --watch '**/*.ts' --exec ts-node index.ts",
+    "build": "npm run bundle-colyseus-client && tsc",
+    "heroku-postbuild": "npm run build"
+  },
+  "engines": {
+    "node": "8.9.1"
+  },
+  "author": "AbdulRahman AlHamali",
+  "license": "MIT",
+  "dependencies": {
+    "colyseus": "^0.8.1",
+    "express": "^4.14.0",
+    "nodemon": "^1.11.0",
+    "serve-index": "^1.8.0",
+    "superagent": "^3.8.1"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2"
+  }
+}

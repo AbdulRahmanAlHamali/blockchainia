@@ -1,0 +1,12 @@
+{
+  "name": "blockchainia-backend",
+  "description": "Fun Multilplayer Game to Teach People About The Blockchain",
+  "repository": "https://github.com/AbdulRahmanAlHamali/blockchainia",
+  "keywords": ["blockchain", "game", "educational", "blockchainia"],
+  "env": {
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "Leave as 'false' to install required devDependencies.",
+      "value": "false"
+    }
+  }
+}
