@@ -1,5 +1,4 @@
-
-const DATABASE = [
+export const DATABASE = [
     {
         question: 'In S1E1 "Pilot": Who started their first day at Dunder Mifflin Scranton?',
         options: ['Jim Halpert', 'Ryan Howard', 'Michael Scott', 'Erin Hannon'],

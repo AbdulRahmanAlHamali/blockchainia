@@ -2,3 +2,8 @@
 <p *ngFor="let attack of transactions">
     {{attack.attacker + ' attacked ' + attack.attacked + ' and cost him ' + attack.damage + ' points'}}
 </p>
+<div>
+    <h1>{{question?.question}}</h1>
+    <label *ngFor="let option of question?.options; let i = index"><input type="radio" name="answer" [value]="i" [(ngModel)]="answer"/> {{option}}</label>
+    <button (click)="submit()">Submit Answer</button>
+</div>

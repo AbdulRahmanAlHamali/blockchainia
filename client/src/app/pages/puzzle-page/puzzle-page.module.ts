@@ -3,6 +3,7 @@ import { RouterModule } from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {PuzzlePageComponent} from "./puzzle-page.component";
 import {routing} from "./puzzle-page.routing";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
     declarations: [
@@ -11,6 +12,7 @@ import {routing} from "./puzzle-page.routing";
     imports: [
         RouterModule,
         CommonModule,
+        FormsModule,
         routing
     ],
     providers: []

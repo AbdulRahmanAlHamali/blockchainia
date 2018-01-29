@@ -6,7 +6,13 @@ export type AttackInfo = {
 }
 
 export type Block = {
-    transactions: AttackInfo[]
+    transactions: AttackInfo[];
+    answer: {
+        question: string;
+        questionIndex: number;
+        answer: number;
+    }
+    roundKey?: number;
 }
 
 export class Blockchain {

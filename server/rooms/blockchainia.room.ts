@@ -1,5 +1,6 @@
 import { Room } from "colyseus";
 import {RoundInfo} from "./round.info";
+import {PuzzleInfo} from "./puzzle.info";
 
 export class BlockChainiaRoom extends Room {
     /**
@@ -8,6 +9,7 @@ export class BlockChainiaRoom extends Room {
      */
     maxClients = 5;
     round: RoundInfo;
+    puzzle: PuzzleInfo;
     clientInfo: {[clientId: string]: {userName: string, privateKey: number}};
 
     onInit() {
@@ -51,7 +53,6 @@ export class BlockChainiaRoom extends Room {
 
         if (data.attack && this.state.inRound) {
             let attack = this.round.createAttack(this.clientInfo[client.sessionId].userName, data.attack.attacked);
-            console.log(attack);
             this.broadcast({
                 attack: attack
             });
@@ -59,7 +60,17 @@ export class BlockChainiaRoom extends Room {
             if (this.round.done) {
                 this.state.inRound = false;
                 this.state.inPuzzle = true;
+                this.puzzle = new PuzzleInfo();
             }
+        }
+
+        if (data.proposedBlock && this.state.inPuzzle) {
+            this.broadcast({
+                proposedBlock: {
+                    from: this.clientInfo[client.sessionId].userName,
+                    block: data.proposedBlock
+                }
+            })
         }
     }
 
@@ -78,6 +89,10 @@ export class BlockChainiaRoom extends Room {
 
         if (data.method === 'whoami') {
             response.result = this.clientInfo[client.sessionId];
+        }
+
+        if (data.method === 'get-puzzle' && this.state.inPuzzle) {
+            response.result = this.puzzle.getQuestionFor(data.params.transactions);
         }
 
         this.send(client, response);
