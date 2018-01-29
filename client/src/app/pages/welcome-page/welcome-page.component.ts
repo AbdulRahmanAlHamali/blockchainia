@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {ColyseusWrapperService} from "../../../services/colyseus-client/colyseus-wrapper.service";
 import {Router} from "@angular/router";
+import {GameManagerService} from "../../../services/colyseus-client/game-manager.service";
 
 @Component({
     selector: 'welcome-page',
@@ -9,12 +10,12 @@ import {Router} from "@angular/router";
 })
 export class WelcomePageComponent {
 
-    constructor(private _colyseusWrapper: ColyseusWrapperService, private _router: Router) {
+    constructor(private _gameManager: GameManagerService, private _router: Router) {
 
     }
 
     joinRoom() {
-        this._colyseusWrapper.joinRoom().subscribe(() => {
+        this._gameManager.run().subscribe(() => {
             this._router.navigate(['blockchainia/waiting-page']);
         });
     }

@@ -5,6 +5,7 @@ import { RouterModule } from "@angular/router";
 import { AppComponent } from './app.component';
 import {routing} from "./app.routing";
 import {ColyseusWrapperService} from "../services/colyseus-client/colyseus-wrapper.service";
+import {GameManagerService} from "../services/colyseus-client/game-manager.service";
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {ColyseusWrapperService} from "../services/colyseus-client/colyseus-wrapp
         routing
     ],
     providers: [
-        ColyseusWrapperService
+        ColyseusWrapperService,
+        GameManagerService
     ],
     bootstrap: [AppComponent]
 })

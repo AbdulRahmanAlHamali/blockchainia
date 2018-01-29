@@ -1,8 +1,7 @@
-
 import {Injectable} from "@angular/core";
 import {Client, Room} from "colyseus.js";
-import {Subject} from "rxjs/Subject";
 import {ReplaySubject} from "rxjs/ReplaySubject";
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class ColyseusWrapperService {
@@ -10,6 +9,8 @@ export class ColyseusWrapperService {
     private _port: string = '2657';
     private _colyseusClient: Client;
     private _room: Room;
+
+    private _dataReplaySubject: ReplaySubject<any>;
 
     private static readonly BLOCKCHAINIA_ROOM = 'blockchainia';
 
@@ -28,8 +29,15 @@ export class ColyseusWrapperService {
 
         this._initClient();
         this._room = this._colyseusClient.join(ColyseusWrapperService.BLOCKCHAINIA_ROOM);
-
         this._room.onJoin.addOnce(() => {
+            // Prepare listeners
+            this._dataReplaySubject = new ReplaySubject<any>();
+            this._room.onData.add((data) => {
+                this._dataReplaySubject.next(data);
+            });
+
+
+            this._room.send({ready: true});
             joinSubject.next(true);
             joinSubject.complete();
         });
@@ -49,5 +57,40 @@ export class ColyseusWrapperService {
 
     isThereRoom() {
         return this._room !== undefined;
+    }
+
+    askQuestion(method: string, params: any) {
+        // Generate a random id between 0 and 999
+        let randomId = Math.floor(Math.random() * 999);
+
+        let subject = new Subject<any>();
+
+        let signalBinding = this._room.onData.add((data) => {
+            if (data.id === randomId) {
+                subject.next(data.result);
+                subject.complete();
+                signalBinding.remove();
+            }
+        });
+
+        this._room.send({
+            id: randomId,
+            method: method,
+            params: params
+        });
+
+        return subject.asObservable();
+    }
+
+    getState() {
+        return this._room.data;
+    }
+
+    getDataObservable() {
+        return this._dataReplaySubject.asObservable();
+    }
+
+    send(data) {
+        this._room.send(data);
     }
 }

@@ -1,1 +1,7 @@
-<h1>FIGHT!!!</h1>
+<h1>FIGHT!!! {{userName}}</h1>
+<ng-container *ngFor="let user of users">
+    <button *ngIf="user !== userName" (click)="attack(user)">{{user}}</button>
+</ng-container>
+<p *ngFor="let attack of transactions">
+    {{attack.attacker + ' attacked ' + attack.attacked + ' and cost him ' + attack.damage + ' points'}}
+</p>

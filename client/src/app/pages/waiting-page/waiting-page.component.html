@@ -1,1 +1,2 @@
-<h1>{{currentNumber}} of 5 players ready!</h1>
+<h1>{{users? users.length : 0}} of 5 players ready!</h1>
+<h1 *ngIf="users?.length === 5">PREPARE!!!</h1>

@@ -1,0 +1,4 @@
+<h1>This round has the following transactions</h1>
+<p *ngFor="let attack of transactions">
+    {{attack.attacker + ' attacked ' + attack.attacked + ' and cost him ' + attack.damage + ' points'}}
+</p>

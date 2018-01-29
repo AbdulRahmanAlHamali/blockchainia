@@ -1,4 +1,5 @@
 import { Room } from "colyseus";
+import {RoundInfo} from "./round.info";
 
 export class BlockChainiaRoom extends Room {
     /**
@@ -6,30 +7,20 @@ export class BlockChainiaRoom extends Room {
      * @type {number}
      */
     maxClients = 5;
-    /**
-     * Set to true if the game is in the round stage (where people are shooting at each other)
-     */
-    inRound: boolean;
-    /**
-     * Set to true if the game is in the puzzle stage (where people are solving the puzzle)
-     */
-    inPuzzle: boolean;
+    round: RoundInfo;
+    clientInfo: {[clientId: string]: {userName: string, privateKey: number}};
 
     onInit() {
-        this.inRound = false;
-        this.inPuzzle = false;
+        this.clientInfo = {};
         this.setState({
             started: false,
-            currentClients: 0
+            users: [],
+            inRound: false,
+            inPuzzle: false
         });
     }
 
     onJoin(client) {
-        this.state.currentClients++;
-        if (this.state.currentClients === this.maxClients) {
-            this.state.started = true;
-            this.inRound = true;
-        }
     }
 
     onLeave(client) {
@@ -37,10 +28,59 @@ export class BlockChainiaRoom extends Room {
     }
 
     onMessage(client, data) {
-        if (data.attack) {
-            let attackDamage = Math.random() * 20;
-            this.broadcast({attacker: client, attacked: data.attacked, damage: attackDamage});
+        if (data.id) {
+            // The client is asking a question
+            this.handleQuestion(client, data);
         }
+
+        if (data.ready) {
+            this.state.users.push('guest' + Math.ceil(Math.random() * 999));
+            this.clientInfo[client.sessionId] = {
+                userName: this.state.users[this.state.users.length - 1],
+                privateKey: Math.ceil(Math.random() * 100000)
+            };
+
+            if (this.state.users.length === this.maxClients) {
+                setTimeout(() => {
+                    this.state.started = true;
+                    this.round = new RoundInfo(this.state.users);
+                    this.state.inRound = true;
+                }, 1000);
+            }
+        }
+
+        if (data.attack && this.state.inRound) {
+            let attack = this.round.createAttack(this.clientInfo[client.sessionId].userName, data.attack.attacked);
+            console.log(attack);
+            this.broadcast({
+                attack: attack
+            });
+
+            if (this.round.done) {
+                this.state.inRound = false;
+                this.state.inPuzzle = true;
+            }
+        }
+    }
+
+    handleQuestion(client, data) {
+        let response = {
+            id: data.id,
+            result: undefined
+        };
+
+        if (data.method === 'get-waiting-state') {
+            response.result = {
+                users: this.state.users,
+                started: this.state.started
+            };
+        }
+
+        if (data.method === 'whoami') {
+            response.result = this.clientInfo[client.sessionId];
+        }
+
+        this.send(client, response);
     }
 
     onDispose() {

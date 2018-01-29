@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from "@angular/router";
-
-import {WaitingPageComponent} from "./waiting-page.component";
-import {routing} from "./waiting-page.routing";
 import {CommonModule} from "@angular/common";
+import {PuzzlePageComponent} from "./puzzle-page.component";
+import {routing} from "./puzzle-page.routing";
 
 @NgModule({
     declarations: [
-        WaitingPageComponent
+        PuzzlePageComponent
     ],
     imports: [
         RouterModule,
@@ -16,4 +15,4 @@ import {CommonModule} from "@angular/common";
     ],
     providers: []
 })
-export class WaitingPageModule { }
+export class PuzzlePageModule{ }
