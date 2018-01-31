@@ -1,0 +1,7 @@
+<h1>These are the valid proposed blocks</h1>
+<div *ngFor="let proposedBlock of validProposedBlocks">
+    <h1>Proposed by {{proposedBlock.from}}</h1>
+    <p *ngFor="let attack of proposedBlock.block.transactions">
+        {{attack.attacker + ' attacked ' + attack.attacked + ' and cost him ' + attack.damage + ' points'}}
+    </p>
+</div>

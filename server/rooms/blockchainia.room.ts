@@ -18,7 +18,8 @@ export class BlockChainiaRoom extends Room {
             started: false,
             users: [],
             inRound: false,
-            inPuzzle: false
+            inPuzzle: false,
+            inPostPuzzle: false
         });
     }
 
@@ -60,17 +61,22 @@ export class BlockChainiaRoom extends Room {
             if (this.round.done) {
                 this.state.inRound = false;
                 this.state.inPuzzle = true;
-                this.puzzle = new PuzzleInfo();
+                this.puzzle = new PuzzleInfo(this.state.users);
             }
         }
 
         if (data.proposedBlock && this.state.inPuzzle) {
             this.broadcast({
-                proposedBlock: {
-                    from: this.clientInfo[client.sessionId].userName,
-                    block: data.proposedBlock
-                }
-            })
+                proposedBlock: this.puzzle.proposeBlock(this.clientInfo[client.sessionId].userName, data.proposedBlock)
+            });
+
+            if (this.puzzle.done) {
+                this.state.inPuzzle = false;
+                this.state.inPostPuzzle = true;
+                this.broadcast({
+                    puzzleKey: this.puzzle.puzzleKey
+                })
+            }
         }
     }
 

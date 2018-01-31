@@ -3,6 +3,7 @@ import {ColyseusWrapperService} from "./colyseus-wrapper.service";
 import { Observable } from "rxjs/Rx";
 import {ReplaySubject} from "rxjs/ReplaySubject";
 import {AttackInfo, Block, Blockchain} from "../blockchain.class";
+import * as hash from 'string-hash';
 
 interface UserInfo {
     userName: string;
@@ -14,9 +15,11 @@ export class GameManagerService {
 
     private _userInfo: UserInfo;
     private _attackSubject: ReplaySubject<AttackInfo>;
-    private _proposedBlockSubject: ReplaySubject<Block>;
+    private _proposedBlockSubject: ReplaySubject<{from: string, block: Block}>;
     private _blockchain: Blockchain;
     private _currentBlock: Block;
+    private _proposedBlocks: {from: string, block: Block}[];
+    private _currentPuzzleKey: number;
 
     constructor(private _colyseusWrapper: ColyseusWrapperService) {
 
@@ -37,7 +40,14 @@ export class GameManagerService {
                     this._attackSubject.next(data.attack);
                 }
                 if (data.proposedBlock) {
+                    if (!this._proposedBlocks) this._proposedBlocks = [];
+
+                    this._proposedBlocks.push(data.proposedBlock);
+
                     this._proposedBlockSubject.next(data.proposedBlock);
+                }
+                if (data.puzzleKey) {
+                    this._currentPuzzleKey = data.puzzleKey;
                 }
             })
         });
@@ -69,6 +79,10 @@ export class GameManagerService {
 
     getRoundDoneObservable() {
         return this._colyseusWrapper.getMessageReceivedObservable('inRound');
+    }
+
+    getPuzzleDoneObservable() {
+        return this._colyseusWrapper.getMessageReceivedObservable('inPuzzle');
     }
 
     attack(user) {
@@ -107,5 +121,24 @@ export class GameManagerService {
                 answer: answer
             }
         });
+    }
+
+    getValidProposedBlocks() {
+        return this._proposedBlocks.filter((proposedBlock) => {
+            let stringData = JSON.stringify(proposedBlock.block.transactions);
+            let index = hash(stringData + this._currentPuzzleKey.toString());
+
+            if (proposedBlock.block.answer.questionIndex !== index) {
+                return false;   // The question does not match the transactions
+            }
+
+            let desiredAnswerIndex = hash(proposedBlock.block.answer.question + this._currentPuzzleKey.toString()) % 4;
+
+            if (desiredAnswerIndex !== proposedBlock.block.answer.answer) {
+                return false;   // Wrong answer
+            }
+
+            return true;
+        })
     }
 }

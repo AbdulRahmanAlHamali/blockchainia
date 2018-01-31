@@ -30,8 +30,10 @@ export class PuzzlePageComponent implements OnInit {
     ngOnInit() {
         this.transactions = this._gameManager.getCurrentBlockTransactions();
         this._gameManager.getPuzzle().subscribe(question => this.question = question);
-        this._gameManager.getProposedBlockObservable().subscribe((block) => {
-            console.log(block);
+        this._gameManager.getPuzzleDoneObservable().subscribe((inPuzzle) => {
+            if (inPuzzle === false) {
+                this._router.navigate(['blockchainia/post-puzzle-page']);
+            }
         })
     }
 }
