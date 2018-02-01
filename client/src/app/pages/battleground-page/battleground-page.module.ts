@@ -3,6 +3,7 @@ import { RouterModule } from "@angular/router";
 import {BattlegroundPageComponent} from "./battleground-page.component";
 import {routing} from "./battleground-page.routing";
 import {CommonModule} from "@angular/common";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
     declarations: [
@@ -11,6 +12,7 @@ import {CommonModule} from "@angular/common";
     imports: [
         RouterModule,
         CommonModule,
+        BrowserAnimationsModule,
         routing
     ],
     providers: []
