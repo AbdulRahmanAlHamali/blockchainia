@@ -26,12 +26,13 @@ export class BattlegroundPageComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.transactions = [];
 
-        Observable.of('guest123').subscribe((userName) => {
+        this._gameManager.whoami().subscribe((userName) => {
             this.userName = userName;
 
-            let userNames = ['guest321', 'guest123', 'guest555', 'guest666', 'guest111'];
+            let userNames = this._gameManager.getUsers();
 
             // We put our user in the 0th position
             let temp = userNames[0];
@@ -49,16 +50,16 @@ export class BattlegroundPageComponent implements OnInit {
             });
         });
 
-        // this._gameManager.getAttackObservable().subscribe((attack) => {
-        //     this.transactions.push(attack);
-        // });
-        //
-        // this._gameManager.getRoundDoneObservable().subscribe((inRound) => {
-        //     if (inRound === false) {
-        //         this._gameManager.prepareNewBlock(this.transactions);
-        //         this._router.navigate(['blockchainia/puzzle-page']);
-        //     }
-        // })
+        this._gameManager.getAttackObservable().subscribe((attack) => {
+            this.transactions.push(attack);
+        });
+
+        this._gameManager.getRoundDoneObservable().subscribe((inRound) => {
+            if (inRound === false) {
+                this._gameManager.prepareNewBlock(this.transactions);
+                this._router.navigate(['blockchainia/puzzle-page']);
+            }
+        })
     }
 
     attack(user: string) {

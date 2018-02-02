@@ -12,7 +12,6 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     imports: [
         RouterModule,
         CommonModule,
-        BrowserAnimationsModule,
         routing
     ],
     providers: []

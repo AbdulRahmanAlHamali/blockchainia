@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {routing} from "./app.routing";
 import {ColyseusWrapperService} from "../services/colyseus-client/colyseus-wrapper.service";
 import {GameManagerService} from "../services/colyseus-client/game-manager.service";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import {GameManagerService} from "../services/colyseus-client/game-manager.servi
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         RouterModule,
         routing
     ],
