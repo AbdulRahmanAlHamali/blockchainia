@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ColyseusWrapperService} from "../../../services/colyseus-client/colyseus-wrapper.service";
 import {Router} from "@angular/router";
 import {GameManagerService} from "../../../services/colyseus-client/game-manager.service";
-import {AttackInfo} from "../../../services/blockchain.class";
+import {Transaction} from "../../../services/blockchain.class";
 
 @Component({
     selector: 'puzzle-page',
@@ -11,7 +11,7 @@ import {AttackInfo} from "../../../services/blockchain.class";
 })
 export class PuzzlePageComponent implements OnInit {
 
-    transactions: AttackInfo[];
+    transactions: Transaction[];
     question;
     answer: number;
 

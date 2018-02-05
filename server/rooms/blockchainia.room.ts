@@ -52,10 +52,10 @@ export class BlockChainiaRoom extends Room {
             }
         }
 
-        if (data.attack && this.state.inRound) {
-            let attack = this.round.createAttack(this.clientInfo[client.sessionId].userName, data.attack.attacked);
+        if (data.donate && this.state.inRound) {
+            let donation = this.round.createDonation(this.clientInfo[client.sessionId].userName, data.donate.donatee);
             this.broadcast({
-                attack: attack
+                donation: donation
             });
 
             if (this.round.done) {

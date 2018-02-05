@@ -1,26 +1,26 @@
 
 export class RoundInfo {
-    remainingAttacks: string[];
+    remainingDonations: string[];
     done: boolean;
 
     constructor(users: string[]) {
         this.done = false;
-        this.remainingAttacks = users.slice();
+        this.remainingDonations = users.slice();
     }
 
-    createAttack(attacker: string, attacked: string) {
-        let attackDamage = Math.floor(Math.random() * 20);
+    createDonation(donator: string, donatee: string) {
+        let donatedAmount = Math.floor(Math.random() * 20);
 
-        this.remainingAttacks.splice(this.remainingAttacks.indexOf(attacker), 1);
+        this.remainingDonations.splice(this.remainingDonations.indexOf(donator), 1);
 
-        if (this.remainingAttacks.length === 0) {
+        if (this.remainingDonations.length === 0) {
             this.done = true;
         }
 
         return {
-            attacker: attacker,
-            attacked: attacked,
-            damage: attackDamage
+            donatorName: donator,
+            donateeName: donatee,
+            donatedAmount: donatedAmount
         }
     }
 }

@@ -1,11 +1,12 @@
-<h1>Attack someone!</h1>
+<h1>Donate to someone!</h1>
 
 <svg width="100%" height="600px" viewBox="0 0 100 100" (mousemove)="calculateHandAngle($event, svg)" #svg>
     <defs>
         <circle r="4" fill="red" id="fireball"/>
     </defs>
 
-    <g *ngFor="let user of users" cursor="pointer" (click)="attack(user.name)">
+    <g *ngFor="let user of users" cursor="pointer" (click)="donate(user.name)">
+        <text [attr.x]="user.xpos" [attr.y]="user.ypos + 8" font-size="3" text-anchor="middle">{{user.score}}</text>
         <circle  [attr.cx]="user.xpos" [attr.cy]="user.ypos" r="5" stroke="black" stroke-width="1" fill="#000080"/>
         <circle  [attr.cx]="user.xpos" [attr.cy]="user.ypos" r="2" stroke="black" stroke-width="0.5" fill="#000080"/>
         <text [attr.x]="user.xpos" [attr.y]="user.ypos - 6" font-size="3" text-anchor="middle">{{user.name}}</text>
@@ -13,9 +14,4 @@
     <circle r="2" [attr.cx]="users[0]? users[0].xpos + 8: 0" [attr.cy]="users[0]? users[0].ypos : 0"
             stroke="black" stroke-width="0.1" fill="#EEBB99"
             [attr.transform]="'rotate(' + handAngle + ' ' + (users[0]? users[0].xpos : 0)  + ' ' + (users[0]? users[0].ypos : 0) + ')'"/>
-    <use x="50" y="50" href="#fireball"></use>
 </svg>
-
-<p *ngFor="let attack of transactions">
-    {{attack.attacker + ' attacked ' + attack.attacked + ' and cost him ' + attack.damage + ' points'}}
-</p>

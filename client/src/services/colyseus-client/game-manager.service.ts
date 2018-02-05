@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {ColyseusWrapperService} from "./colyseus-wrapper.service";
 import { Observable } from "rxjs/Rx";
 import {ReplaySubject} from "rxjs/ReplaySubject";
-import {AttackInfo, Block, Blockchain} from "../blockchain.class";
+import {Block, Blockchain, DonationInfo, Transaction} from "../blockchain.class";
 import * as hash from 'string-hash';
 
 interface UserInfo {
@@ -14,7 +14,7 @@ interface UserInfo {
 export class GameManagerService {
 
     private _userInfo: UserInfo;
-    private _attackSubject: ReplaySubject<AttackInfo>;
+    private _donationSubject: ReplaySubject<DonationInfo>;
     private _proposedBlockSubject: ReplaySubject<{from: string, block: Block}>;
     private _blockchain: Blockchain;
     private _currentBlock: Block;
@@ -26,18 +26,17 @@ export class GameManagerService {
     }
 
     _initSubjects() {
-        this._attackSubject = new ReplaySubject();
+        this._donationSubject = new ReplaySubject();
         this._proposedBlockSubject = new ReplaySubject();
     }
 
     run() {
-
         this._initSubjects();
         this._blockchain = new Blockchain();
         return this._colyseusWrapper.joinRoom().do(() => {
             this._colyseusWrapper.getDataObservable().subscribe((data) => {
-                if (data.attack) {
-                    this._attackSubject.next(data.attack);
+                if (data.donation) {
+                    this._donationSubject.next(data.donation);
                 }
                 if (data.proposedBlock) {
                     if (!this._proposedBlocks) this._proposedBlocks = [];
@@ -65,12 +64,27 @@ export class GameManagerService {
         }).map((result) => result.userName);
     }
 
-    getUsers() {
+    initBlockChain() {
+        this._blockchain.addBlock({
+            transactions: this.getUsers().map(user => {
+                return {
+                    type: 'grant',
+                    info: {
+                        grantedName: user,
+                        grantedAmount: 50
+                    }
+                }
+            }),
+            answer: null
+        });
+    }
+
+    getUsers(): string[] {
         return this._colyseusWrapper.getState().users;
     }
 
-    getAttackObservable() {
-        return this._attackSubject.asObservable();
+    getDonationObservable() {
+        return this._donationSubject.asObservable();
     }
 
     getProposedBlockObservable() {
@@ -85,17 +99,23 @@ export class GameManagerService {
         return this._colyseusWrapper.getMessageReceivedObservable('inPuzzle');
     }
 
-    attack(user) {
+    donate(user) {
         this._colyseusWrapper.send({
-            attack: {
-                attacked: user
+            donate: {
+                donatee: user
             }
         });
     }
 
-    prepareNewBlock(transactions: AttackInfo[]) {
+    prepareNewBlock(transactions: Transaction[]) {
         this._currentBlock = {
-            transactions: transactions,
+            transactions: transactions.concat([{
+                type: 'grant',
+                info: {
+                    grantedName: this._userInfo.userName,
+                    grantedAmount: 5
+                }
+            }]),
             answer: {
                 question: '',
                 questionIndex: -1,
@@ -112,6 +132,10 @@ export class GameManagerService {
         return this._colyseusWrapper.askQuestion('get-puzzle', {
             transactions: this._currentBlock.transactions
         })
+    }
+
+    getWaitingState() {
+        return this._colyseusWrapper.askQuestion('get-waiting-state', {});
     }
 
     submitAnswer(answer: {question: string, questionIndex: number, answer: number}) {
@@ -140,5 +164,9 @@ export class GameManagerService {
 
             return true;
         })
+    }
+
+    getScores() {
+        return this._blockchain.getScores();
     }
 }

@@ -17,7 +17,7 @@ export class WaitingPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._colyseusWrapper.askQuestion('get-waiting-state', {}).subscribe((waitingState) => {
+        this._gameManager.getWaitingState().subscribe((waitingState) => {
             // If this has not already been answered.
             if (!this.users) {
                 this.users = waitingState.users;
@@ -31,14 +31,11 @@ export class WaitingPageComponent implements OnInit {
             setTimeout(() => {
                 this.users = this._gameManager.getUsers();
             });
-            // if (!this.users) {
-            //     this.users = [];
-            // }
-            // this.users.push(newUser);
         });
 
         this._colyseusWrapper.getMessageReceivedObservable('started').subscribe((started) => {
             if (started) {
+                this._gameManager.initBlockChain();
                 this._router.navigate(['blockchainia/battleground-page']);
             }
         });

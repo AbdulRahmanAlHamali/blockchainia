@@ -1,6 +1,11 @@
 <h1>This round has the following transactions</h1>
-<p *ngFor="let attack of transactions">
-    {{attack.attacker + ' attacked ' + attack.attacked + ' and cost him ' + attack.damage + ' points'}}
+<p *ngFor="let transaction of transactions">
+    <ng-container *ngIf="transaction.type === 'donation'">
+        {{transaction.info.donatorName + ' donated ' + transaction.info.donatedAmount + ' to ' + transaction.info.donateeName}}
+    </ng-container>
+    <ng-container *ngIf="transaction.type === 'grant'">
+        {{transaction.info.grantedName + ' was granted ' + transaction.info.grantedAmount}}
+    </ng-container>
 </p>
 <div>
     <h1>{{question?.question}}</h1>
